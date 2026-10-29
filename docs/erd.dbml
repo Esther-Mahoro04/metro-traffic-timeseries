@@ -1,0 +1,29 @@
+// Paste into https://dbdiagram.io to regenerate/edit the ERD
+Table holidays {
+  holiday_id int [pk, increment]
+  holiday_name varchar(50) [unique, not null]
+}
+Table weather_conditions {
+  weather_id int [pk, increment]
+  weather_main varchar(30) [not null]
+  weather_description varchar(60) [not null]
+  indexes { (weather_main, weather_description) [unique] }
+}
+Table traffic_observations {
+  obs_id int [pk, increment]
+  date_time datetime [unique, not null]
+  traffic_volume int [not null]
+  holiday_id int [not null]
+  is_imputed tinyint [not null]
+}
+Table weather_readings {
+  obs_id int [pk]
+  weather_id int [not null]
+  temp decimal(7,3) [not null]
+  rain_1h decimal(8,2) [not null]
+  snow_1h decimal(6,2) [not null]
+  clouds_all tinyint [not null]
+}
+Ref: traffic_observations.holiday_id > holidays.holiday_id
+Ref: weather_readings.obs_id - traffic_observations.obs_id
+Ref: weather_readings.weather_id > weather_conditions.weather_id
