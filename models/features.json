@@ -1,0 +1,1 @@
+{"features": ["temp_k", "rain_1h", "clouds_all", "is_holiday", "hour", "dayofweek", "month", "lag_1", "lag_24", "lag_168", "ma_24", "ma_168"], "target": "traffic_volume"}

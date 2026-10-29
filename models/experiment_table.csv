@@ -1,0 +1,6 @@
+Exp,Model,Features,Hyperparameters,Val RMSE,Val MAE,Test RMSE,Test MAE
+0,Baseline: lag_168,lag_168 only,none,657,344,623,320
+1,Ridge (no lags),7 features,alpha=10,799,599,760,565
+2,Ridge (with lags),12 features,alpha=10,393,271,371,258
+3,Random Forest (default),12 features,n_estimators=100,264,166,241,152
+4,Random Forest (tuned),12 features,"{'n_estimators': 100, 'min_samples_leaf': 1, 'max_features': 0.5, 'max_depth': 12}",259,167,236,153
