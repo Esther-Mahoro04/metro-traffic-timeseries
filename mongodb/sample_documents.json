@@ -1,0 +1,66 @@
+[
+  {
+    "date_time": {
+      "$date": "2017-06-14T17:00:00Z"
+    },
+    "traffic_volume": 6055,
+    "holiday": "None",
+    "is_imputed": false,
+    "weather": {
+      "temp": 300.65,
+      "rain_1h": 0.0,
+      "snow_1h": 0.0,
+      "clouds_all": 40,
+      "main": "Clouds",
+      "description": "scattered clouds"
+    }
+  },
+  {
+    "date_time": {
+      "$date": "2012-12-25T00:00:00Z"
+    },
+    "traffic_volume": 803,
+    "holiday": "Christmas Day",
+    "is_imputed": false,
+    "weather": {
+      "temp": 264.4,
+      "rain_1h": 0.0,
+      "snow_1h": 0.0,
+      "clouds_all": 90,
+      "main": "Clouds",
+      "description": "overcast clouds"
+    }
+  },
+  {
+    "date_time": {
+      "$date": "2015-12-23T12:00:00Z"
+    },
+    "traffic_volume": 5167,
+    "holiday": "None",
+    "is_imputed": false,
+    "weather": {
+      "temp": 274.33,
+      "rain_1h": 0.98,
+      "snow_1h": 0.51,
+      "clouds_all": 90,
+      "main": "Rain",
+      "description": "moderate rain"
+    }
+  },
+  {
+    "date_time": {
+      "$date": "2012-10-03T07:00:00Z"
+    },
+    "traffic_volume": 6092,
+    "holiday": "None",
+    "is_imputed": true,
+    "weather": {
+      "temp": 278.175,
+      "rain_1h": 0.0,
+      "snow_1h": 0.0,
+      "clouds_all": 1,
+      "main": "Clear",
+      "description": "sky is clear"
+    }
+  }
+]
