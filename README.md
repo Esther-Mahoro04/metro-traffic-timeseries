@@ -66,6 +66,57 @@ The tuned Random Forest is the saved model (⁠ models/best_model.joblib ⁠
 The model forecasts the *next hour*. It needs the previous 168 consecutive hourly records plus the weather for the target hour, because it uses ⁠ lag_168 ⁠ and ⁠ ma_168 ⁠.
 
 
+## Task 2: Database Design and Implementation (SQL and MongoDB)
+
+### Overview
+The same data is stored in both databases: 43,623 hourly records of westbound traffic on I-94 during 2 Oct 2012 09:00 to 30 Sep 2018 23:00 (Metro Interstate Traffic Volume). Task 1 short gaps are preserved in both databases and marked with `is_imputed` (3,059 rows, 7.0%). Temperature is in Kelvin (K). Lags and moving averages are not stored, but calculated in the preprocessing pipeline. On loading, `weather_description` is lowercased to ensure identical values across both databases.
+
+### Relational design (MySQL)
+Four normalised tables:
+
+| Table | Purpose |
+| :--- | :--- |
+| `holidays` | Lookup of holiday names (12 values including "None") |
+| `weather_conditions` | Lookup of `weather_main` + `weather_description` pairs (34 values) |
+| `traffic_observations` | Core time series: `date_time` (unique, indexed), `traffic_volume`, `is_imputed`, `holiday_id` (FK) |
+| `weather_readings` | One row per observation: `temp`, `rain_1h`, `snow_1h`, `clouds_all`, `weather_id` (FK) |
+
+- **Why this design:** Lookup tables eliminate redundancy across thousands of repeated holiday and weather labels. A unique index on `date_time` prevents duplicate hours and accelerates range and latest-record queries. Weather readings cascade-delete with observations (`ON DELETE CASCADE`). Full schema: [`sql/schema.sql`](sql/schema.sql) and ERD diagram: [`docs/erd.png`](docs/erd.png).
+
+### MongoDB design
+Collection `traffic` in database `traffic_db`: one document per hour, with weather embedded, stored as a native time-series collection (`timeField: date_time`, hourly granularity). Example document:
+
+```json
+{
+  "date_time": {
+    "$date": "2017-06-14T17:00:00Z"
+  },
+  "traffic_volume": 6055,
+  "holiday": "None",
+  "is_imputed": false,
+  "weather": {
+    "temp": 300.65,
+    "rain_1h": 0,
+    "snow_1h": 0,
+    "clouds_all": 40,
+    "main": "Clouds",
+    "description": "scattered clouds"
+  }
+}
+```
+
+- **Embedding instead of referencing:** Weather and holiday info are read together with the observation, avoiding joins on read.
+- **Time-series collection:** Efficient range scans on `date_time`. Duplicate timestamps were stripped prior to loading.
+- Same fields as SQL, as well as `is_imputed`, for direct comparison.
+
+### SQL vs MongoDB
+Analytical queries (date range, latest record, hourly peak, weather breakdown, holiday comparison, and 7-day moving average) are implemented in [`sql/queries.sql`](sql/queries.sql) and [`mongodb/queries.js`](mongodb/queries.js).
+- **Consistency:** All six queries produce matching results across both databases, confirming identical data loading.
+- **Joins vs. Embedding:** SQL requires joins across 3–4 tables for weather and holiday data, whereas MongoDB retrieves everything from a single embedded document.
+- **Data Integrity:** MySQL enforces relational integrity via unique timestamps and foreign keys; MongoDB time-series collections require deduplication before loading.
+- **Moving Average:** SQL computes moving windows via CTEs and subqueries; MongoDB achieves this using the `$setWindowFields` aggregation stage.
+
+
 ## Task 3 endpoints
 
 The same operations exist for both databases. MySQL ids are integers (`obs_id`). MongoDB ids are document ids.
