@@ -1,0 +1,134 @@
+{
+  "source": "MySQL",
+  "api_url": "http://127.0.0.1:8000",
+  "run_at": "2026-10-29 19:27:46",
+  "as_of": "2018-09-23 23:00:00",
+  "records_fetched": 336,
+  "rows_after_cleaning": 336,
+  "model": "RandomForestRegressor (tuned, experiment 4)",
+  "next_hour": {
+    "timestamp": "2018-09-24 00:00:00",
+    "predicted_traffic_volume": 563
+  },
+  "horizon_hours": 24,
+  "forecast": [
+    {
+      "timestamp": "2018-09-24 00:00:00",
+      "predicted": 563
+    },
+    {
+      "timestamp": "2018-09-24 01:00:00",
+      "predicted": 346
+    },
+    {
+      "timestamp": "2018-09-24 02:00:00",
+      "predicted": 280
+    },
+    {
+      "timestamp": "2018-09-24 03:00:00",
+      "predicted": 352
+    },
+    {
+      "timestamp": "2018-09-24 04:00:00",
+      "predicted": 860
+    },
+    {
+      "timestamp": "2018-09-24 05:00:00",
+      "predicted": 2808
+    },
+    {
+      "timestamp": "2018-09-24 06:00:00",
+      "predicted": 5581
+    },
+    {
+      "timestamp": "2018-09-24 07:00:00",
+      "predicted": 6300
+    },
+    {
+      "timestamp": "2018-09-24 08:00:00",
+      "predicted": 5925
+    },
+    {
+      "timestamp": "2018-09-24 09:00:00",
+      "predicted": 5106
+    },
+    {
+      "timestamp": "2018-09-24 10:00:00",
+      "predicted": 4681
+    },
+    {
+      "timestamp": "2018-09-24 11:00:00",
+      "predicted": 4655
+    },
+    {
+      "timestamp": "2018-09-24 12:00:00",
+      "predicted": 4680
+    },
+    {
+      "timestamp": "2018-09-24 13:00:00",
+      "predicted": 4783
+    },
+    {
+      "timestamp": "2018-09-24 14:00:00",
+      "predicted": 4998
+    },
+    {
+      "timestamp": "2018-09-24 15:00:00",
+      "predicted": 5362
+    },
+    {
+      "timestamp": "2018-09-24 16:00:00",
+      "predicted": 6145
+    },
+    {
+      "timestamp": "2018-09-24 17:00:00",
+      "predicted": 5706
+    },
+    {
+      "timestamp": "2018-09-24 18:00:00",
+      "predicted": 4300
+    },
+    {
+      "timestamp": "2018-09-24 19:00:00",
+      "predicted": 3117
+    },
+    {
+      "timestamp": "2018-09-24 20:00:00",
+      "predicted": 2666
+    },
+    {
+      "timestamp": "2018-09-24 21:00:00",
+      "predicted": 2275
+    },
+    {
+      "timestamp": "2018-09-24 22:00:00",
+      "predicted": 1649
+    },
+    {
+      "timestamp": "2018-09-24 23:00:00",
+      "predicted": 1114
+    }
+  ],
+  "backtest_last_hours": {
+    "model": {
+      "n": 24,
+      "mae": 175.5,
+      "rmse": 248.4
+    },
+    "seasonal_naive_lag168": {
+      "n": 24,
+      "mae": 188.0,
+      "rmse": 320.7
+    }
+  },
+  "forecast_vs_actual": {
+    "n": 24,
+    "mae": 152.7,
+    "rmse": 180.2
+  },
+  "assumptions": [
+    "Future weather (temp, rain, snow, clouds) is carried forward from the last observed hour.",
+    "A future date is treated as a holiday only if it is already flagged in the fetched history.",
+    "Steps beyond the first hour feed earlier predictions back in as lag/moving-average inputs."
+  ]
+}
