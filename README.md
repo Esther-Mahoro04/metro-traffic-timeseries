@@ -1,4 +1,4 @@
-i# Metro Interstate Traffic Volume — time-series pipeline
+# Metro Interstate Traffic Volume — time-series pipeline
 
 Hourly westbound traffic on I-94 (Minneapolis–St Paul), from the Metro Interstate Traffic Volume dataset. The series runs from **2012-10-02 09:00** to **2018-09-30 23:00**. The prediction target is `traffic_volume`. Each hour also records holiday, temperature (Kelvin), rain, snow, cloud cover, and a weather description.
 
@@ -20,13 +20,13 @@ This repository folder holds the group project. **Task 3** (this API) exposes th
 
 ## Task 1: Preprocessing, analysis and model
 
-*Notebook:* ⁠ notebooks/task1_eda_and_modelling.ipynb ⁠. It was written in Google Colab, so the first cell sets ⁠ PROJECT = "/content/drive/MyDrive/traffic-project" ⁠. To run it elsewhere, change that one line to the repo folder.
+Notebook: notebooks/task1_eda_and_modelling.ipynb⁠. It was written  from google colab, so the first cell sets ⁠ PROJECT = "/content/drive/MyDrive/traffic-project" ⁠
 
 ### Data findings
 
-•⁠  ⁠48,204 raw rows, 2012-10-02 to 2018-09-30, hourly.
-•⁠  ⁠7,629 duplicate timestamps (several weather descriptions per hour), and about 23% of hours missing from the hourly timeline, including a 7,386-hour outage from August 2014 to June 2015.
-•⁠  ⁠10 impossible temperature values (0 K) and one rainfall outlier of 9,831 mm.
+ ⁠48,204 raw rows, 2012-10-02 to 2018-09-30, hourly.
+ ⁠7,629 duplicate timestamps (several weather descriptions per hour), and about 23% of hours missing from the hourly timeline, including a 7,386-hour outage from August 2014 to June 2015.
+ ⁠10 impossible temperature values (0 K) and one rainfall outlier of 9,831 mm.
 
 ### Cleaning (⁠ src/preprocessing.py ⁠)
 
