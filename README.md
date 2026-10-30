@@ -1,4 +1,4 @@
-# Metro Interstate Traffic Volume — time-series pipeline
+i# Metro Interstate Traffic Volume — time-series pipeline
 
 Hourly westbound traffic on I-94 (Minneapolis–St Paul), from the Metro Interstate Traffic Volume dataset. The series runs from **2012-10-02 09:00** to **2018-09-30 23:00**. The prediction target is `traffic_volume`. Each hour also records holiday, temperature (Kelvin), rain, snow, cloud cover, and a weather description.
 
@@ -17,6 +17,54 @@ This repository folder holds the group project. **Task 3** (this API) exposes th
 | `api/` | Task 3 FastAPI application |
 | `scripts/seed_databases.py` | Loads the CSV into MySQL and MongoDB |
 | `scripts/demo_task3.py` | Calls every endpoint and writes `results/task3_api_results.md` |
+
+## Task 1: Preprocessing, analysis and model
+
+*Notebook:* ⁠ notebooks/task1_eda_and_modelling.ipynb ⁠. It was written in Google Colab, so the first cell sets ⁠ PROJECT = "/content/drive/MyDrive/traffic-project" ⁠. To run it elsewhere, change that one line to the repo folder.
+
+### Data findings
+
+•⁠  ⁠48,204 raw rows, 2012-10-02 to 2018-09-30, hourly.
+•⁠  ⁠7,629 duplicate timestamps (several weather descriptions per hour), and about 23% of hours missing from the hourly timeline, including a 7,386-hour outage from August 2014 to June 2015.
+•⁠  ⁠10 impossible temperature values (0 K) and one rainfall outlier of 9,831 mm.
+
+### Cleaning (⁠ src/preprocessing.py ⁠)
+
+1.⁠ ⁠Keep one row per timestamp and sort in time order.
+2.⁠ ⁠Treat temperature of 0 K or below, and rainfall above 500 mm, as missing.
+3.⁠ ⁠Reindex to a full hourly grid, which exposes the missing hours.
+4.⁠ ⁠Fill gaps of 6 hours or less by time interpolation (rows flagged ⁠ is_imputed = 1 ⁠).
+5.⁠ ⁠Drop gaps longer than 6 hours instead of inventing months of traffic.
+
+Result: 43,623 hourly rows in ⁠ data/traffic_clean.csv ⁠.
+
+### Analytical questions
+
+| # | Question | Finding |
+|---|---|---|
+| 1 | Long-term trend? | None. Yearly means stay within about 3,230–3,375 vehicles/hour, with winter dips. |
+| 2 | Daily and weekly pattern? | Weekday peaks at about 07:00 and 16:00; weekends are flatter. |
+| 3 | Does traffic depend on its past (lagged features)? | Yes: correlation 0.915 (lag 1), 0.862 (lag 24), 0.945 (lag 168). |
+| 4 | Do moving averages help? | They track the level but not the daily shape; best as extra features. |
+| 5 | Do weather variables matter? | Only weakly; temperature is the strongest. |
+| 6 | Do holidays change traffic? | About 30% lower on weekday holidays. |
+
+### Model
+
+Chronological split: train 2012-10 to 2017-05, validation to 2018-01, test 2018-01 to 2018-09. Tuning used ⁠ TimeSeriesSplit ⁠ on the training set, the best model was chosen on validation RMSE, and the test set was used only for the final comparison. Errors are in vehicles per hour.
+
+| Exp | Model | Hyperparameters | Val RMSE | Test RMSE | Test MAE |
+|---|---|---|---|---|---|
+| 0 | Baseline: same hour last week | none | 657 | 623 | 320 |
+| 1 | Ridge, no lag features | alpha=10 | 799 | 760 | 565 |
+| 2 | Ridge, with lags and moving averages | alpha=10 | 393 | 371 | 258 |
+| 3 | Random Forest, default | n_estimators=100 | 264 | 241 | 152 |
+| 4 | Random Forest, tuned | n_estimators=100, max_depth=12, min_samples_leaf=1, max_features=0.5 | *259* | *236* | 153 |
+
+The tuned Random Forest is the saved model (⁠ models/best_model.joblib ⁠). It reduces test RMSE by about 62% against the baseline. Past traffic (⁠ lag_168 ⁠, ⁠ lag_1 ⁠) drives its predictions; weather features add almost nothing.
+
+The model forecasts the *next hour*. It needs the previous 168 consecutive hourly records plus the weather for the target hour, because it uses ⁠ lag_168 ⁠ and ⁠ ma_168 ⁠.
+
 
 ## Task 3 endpoints
 
